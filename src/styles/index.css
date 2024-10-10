@@ -1,0 +1,9 @@
+@import './tailwind.css';
+
+body {
+    @apply bg-black
+}
+
+html, body, #root {
+    @apply min-h-screen
+}
