@@ -1,0 +1,19 @@
+.btn {
+    @apply h-10 px-4 inline-flex items-center justify-center rounded;
+
+    &.btn-rounde {
+        @apply rounded-full
+    }
+
+    &.btn-block {
+        @apply flex w-full
+    }
+
+    &.btn-primary {
+        @apply bg-primary text-white
+    }
+
+    &.btn-gray {
+        @apply bg-gray-700 text-white
+    }
+}

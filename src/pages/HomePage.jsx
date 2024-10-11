@@ -3,7 +3,7 @@ import TweetItem from "../components/ui/tweet-item";
 
 function HomePage() {
     return (
-        <div className="divide-y divide-borderColor">
+        <div className="divide-y dark:divide-borderColor">
             <TweetForm/>
             {[...Array(10).keys()].map((_, index) => (
                 <TweetItem key={index}/>

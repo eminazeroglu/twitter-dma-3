@@ -1,7 +1,9 @@
 @import './tailwind.css';
+@import './components/forms.css';
+@import './components/buttons.css';
 
 body {
-    @apply bg-black
+    @apply dark:bg-gray-900
 }
 
 html, body, #root {

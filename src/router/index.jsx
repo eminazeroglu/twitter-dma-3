@@ -16,13 +16,15 @@ import { GoBell } from "react-icons/go";
 import { HiOutlineEnvelope } from "react-icons/hi2";
 import { BsBookmark } from "react-icons/bs";
 import { LuClipboardList } from "react-icons/lu";
+import { GlobalContextProvider } from "../context/GlobalContext";
+import GlobalProvider from "../providers/GlobalProvider";
 
 const routes = [
     {
         path: '/',
         label: 'Home',
-        icon: <BiSolidHomeCircle/>,
-        element: <HomePage/>,
+        icon: <BiSolidHomeCircle />,
+        element: <HomePage />,
         isAuth: true,
         isMenu: true,
         layout: AppLayout
@@ -30,8 +32,8 @@ const routes = [
     {
         path: '/explore',
         label: 'Explore',
-        icon: <FaHashtag/>,
-        element: <ExplorePage/>,
+        icon: <FaHashtag />,
+        element: <ExplorePage />,
         isAuth: true,
         isMenu: true,
         layout: AppLayout
@@ -39,9 +41,9 @@ const routes = [
     {
         path: '/notification',
         label: 'Notification',
-        icon: <GoBell/>,
+        icon: <GoBell />,
         count: 10,
-        element: <NotificationPage/>,
+        element: <NotificationPage />,
         isAuth: true,
         isMenu: true,
         layout: AppLayout
@@ -49,8 +51,8 @@ const routes = [
     {
         path: '/message',
         label: 'Messages',
-        icon: <HiOutlineEnvelope/>,
-        element: <MessagePage/>,
+        icon: <HiOutlineEnvelope />,
+        element: <MessagePage />,
         isAuth: true,
         isMenu: true,
         layout: AppLayout
@@ -58,8 +60,8 @@ const routes = [
     {
         path: '/bookmark',
         label: 'Bookmarks',
-        icon: <BsBookmark/>,
-        element: <BookmarkPage/>,
+        icon: <BsBookmark />,
+        element: <BookmarkPage />,
         isAuth: true,
         isMenu: true,
         layout: AppLayout
@@ -67,8 +69,8 @@ const routes = [
     {
         path: '/list',
         label: 'Lists',
-        icon: <LuClipboardList/>,
-        element: <ListPage/>,
+        icon: <LuClipboardList />,
+        element: <ListPage />,
         isAuth: true,
         isMenu: true,
         layout: AppLayout
@@ -76,15 +78,15 @@ const routes = [
     {
         path: '/profile',
         label: 'Profile',
-        icon: <BiUser/>,
-        element: <ProfilePage/>,
+        icon: <BiUser />,
+        element: <ProfilePage />,
         isAuth: true,
         isMenu: true,
         layout: AppLayout
     },
     {
         path: '/login',
-        element: <LoginPage/>,
+        element: <LoginPage />,
         layout: AuthLayout
     }
 ]
@@ -103,6 +105,14 @@ const createRouter = routes => {
         }
 
         if (router.isAuth) router.element = <AuthProvider>{router.element}</AuthProvider>
+
+        router.element = (
+            <GlobalContextProvider>
+                <GlobalProvider>
+                    {router.element}
+                </GlobalProvider>
+            </GlobalContextProvider>
+        )
 
         return router;
     })
