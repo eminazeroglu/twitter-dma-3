@@ -18,6 +18,12 @@ import { BsBookmark } from "react-icons/bs";
 import { LuClipboardList } from "react-icons/lu";
 import { GlobalContextProvider } from "../context/GlobalContext";
 import GlobalProvider from "../providers/GlobalProvider";
+import RegisterPage from "../pages/RegisterPage";
+import ProfileTweet from "../components/pages/profile/ProfileTweet";
+import ProfileFollower from "../components/pages/profile/ProfileFollower";
+import ProfileFollowing from "../components/pages/profile/ProfileFollowing";
+import { TweetPage } from "../pages/TweetPage";
+import { Navigate } from "react-router-dom";
 
 const routes = [
     {
@@ -76,18 +82,48 @@ const routes = [
         layout: AppLayout
     },
     {
-        path: '/profile',
+        path: '/tweet/:hashtag',
+        element: <TweetPage />,
+        isAuth: true,
+        isMenu: false,
+        layout: AppLayout
+    },
+    {
+        path: '/profile/:username',
         label: 'Profile',
         icon: <BiUser />,
         element: <ProfilePage />,
         isAuth: true,
         isMenu: true,
-        layout: AppLayout
+        layout: AppLayout,
+        children: [
+            {
+                index: true,
+                element: <ProfileTweet />,
+            },
+            {
+                path: 'follower',
+                element: <ProfileFollower />,
+            },
+            {
+                path: 'following',
+                element: <ProfileFollowing />,
+            }
+        ]
     },
     {
         path: '/login',
         element: <LoginPage />,
         layout: AuthLayout
+    },
+    {
+        path: '/register',
+        element: <RegisterPage />,
+        layout: AuthLayout
+    },
+    {
+        path: '*',
+        element: <Navigate to={'/'}/>
     }
 ]
 

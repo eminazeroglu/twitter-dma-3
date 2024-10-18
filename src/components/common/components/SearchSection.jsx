@@ -17,7 +17,7 @@ function SearchSection() {
             <input
                 type="search"
                 placeholder="Serach Twitter"
-                className="w-full text-[15px] placeholder:text-[15px] font-[400] placeholder:text-[#6E767D] text-white bg-transparent outline-none"
+                className="w-full text-[15px] placeholder:text-[15px] font-[400] placeholder:text-[#6E767D] dark:text-white bg-transparent outline-none"
             />
         </form>
     );

@@ -1,32 +1,68 @@
+import moment from "moment";
+import { getMedia, notification } from "../../../utils/helperUtil";
 import Verify from "../verify";
+import { apiPost } from "../../../api/clinet";
+import { TWEET_ENDPOINT } from "../../../api/tweetEndpoint";
+import { useState } from "react";
+import classNames from "classnames";
+import { Link } from "react-router-dom";
 
-function TweetItem() {
+function TweetItem({ tweet, onRefresh }) {
+
+    const [isLike, setIsLike] = useState(false)
+
+    const handleLike = async () => {
+        const res = await apiPost(TWEET_ENDPOINT.tweetLike.replace(':id', tweet.id))
+
+        if (res.status === 200) {
+            notification(res.data.message, 'success')
+            setIsLike(true)
+            onRefresh?.()
+        }
+
+    }
+
+    const handleRetweet = async () => {
+        const res = await apiPost(TWEET_ENDPOINT.tweetRetweet.replace(':id', tweet.id))
+
+        if (res.status === 200) {
+            notification(res.data.message, 'success')
+            onRefresh?.()
+        }
+
+    }
+
     return (
         <div className="flex items-start gap-[12px] py-[13px] px-[16px]">
             <img
-                className="w-[48px] h-[48px] rounded-full object-cover"
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgT-R52bE5nFi11FvXv3Er0ADTmXuBd3ieeQ&s"
+                className="w-[48px] shrink-0 h-[48px] rounded-full object-cover"
+                src={getMedia(tweet.user.profile_image)}
                 alt="logo"
             />
             <div>
                 <div className="flex items-center">
-                    <a href="#" className="font-bold text-[15px] gap-[3px] flex items-center">
-                        <span className="font-bold dark:text-[#D9D9D9]">CNN</span>
-                        <Verify/>
+                    <Link to={`/profile/${tweet.user.username}`} className="font-bold text-[15px] gap-[3px] flex items-center">
+                        <span className="font-bold dark:text-[#D9D9D9]">{tweet.user.name} {tweet.user.surname}</span>
+                        <Verify />
                         <span className="text-[#6E767D] text-[15px] font-[300] ms-[4px]">
                             {" "}
-                            @CNN
+                            @{tweet.user.username}
                         </span>
-                    </a>
+                    </Link>
                     <span className="dark:text-[#6E767D] ms-[4px]">.</span>
-                    <span className="dark:text-[#6E767D] text-[15px] font-[300] ms-[4px]">7m</span>
+                    <span className="dark:text-[#6E767D] text-[15px] font-[300] ms-[4px]">{moment(tweet.created_at).format('DD-MMM-YYYY HH:mm')}</span>
                 </div>
                 <p className="dark:text-[#D9D9D9] text-gray-700 font-[400] text-[13px] md:text-[15px] mt-[5px]">
-                    President Joe Biden touted a new agreement reached with the European Union
-                    to ease Trump-era tariffs on aluminum and steel as a "major breakthrough"
-                    that would serve to both strengthen the US steel industry and combat the
-                    global climate crisis.
+                    {tweet.content}
                 </p>
+                {(tweet.media && tweet.media.length > 0) && (
+                    <>
+                        {tweet.media.map((item, index) => (
+                            <img key={index} className="w-full h-[180px] md:h-[283px] rounded-[30px] mt-[12px] object-cover" src={getMedia(item.url)} alt="" />
+                        ))}
+                    </>
+                )}
+
                 <ul className="flex items-center w-[90%] md:w-[70%] justify-between mt-[19px] gap-5">
                     <li>
                         <button className="flex items-center text-[#6E767D] text-[13px] font-[300] gap-[15px]">
@@ -42,11 +78,11 @@ function TweetItem() {
                                     fill="#6E767D"
                                 />
                             </svg>
-                            57
+                            {tweet.reply_count}
                         </button>
                     </li>
                     <li>
-                        <button className="flex items-center text-[#6E767D] text-[13px] font-[300] gap-[15px]">
+                        <button onClick={() => handleRetweet()} className="flex items-center text-[#6E767D] text-[13px] font-[300] gap-[15px]">
                             <svg
                                 width={20}
                                 height={20}
@@ -59,11 +95,16 @@ function TweetItem() {
                                     fill="#6E767D"
                                 />
                             </svg>
-                            144
+                            {tweet.retweet_count}
                         </button>
                     </li>
                     <li>
-                        <button className="flex items-center text-[#6E767D] text-[13px] font-[300] gap-[15px]">
+                        <button onClick={() => handleLike()} className={classNames(
+                            'flex items-center text-[#6E767D] text-[13px] font-[300] gap-[15px]',
+                            {
+                                '!text-red-500': isLike
+                            }
+                        )}>
                             <svg
                                 width={20}
                                 height={20}
@@ -73,10 +114,10 @@ function TweetItem() {
                             >
                                 <path
                                     d="M10 18.0317H9.98833C7.83583 17.9917 1.625 12.38 1.625 7.065C1.625 4.51167 3.72917 2.27 6.1275 2.27C8.03583 2.27 9.31917 3.58667 9.99917 4.545C10.6775 3.58833 11.9608 2.27 13.87 2.27C16.27 2.27 18.3733 4.51167 18.3733 7.06583C18.3733 12.3792 12.1617 17.9908 10.0092 18.03H10V18.0317ZM6.12833 3.52083C4.395 3.52083 2.87583 5.1775 2.87583 7.06667C2.87583 11.85 8.7375 16.73 10.0008 16.7817C11.2658 16.73 17.1258 11.8508 17.1258 7.06667C17.1258 5.1775 15.6067 3.52083 13.8733 3.52083C11.7667 3.52083 10.59 5.9675 10.58 5.99167C10.3883 6.46 9.61667 6.46 9.42417 5.99167C9.4125 5.96667 8.23667 3.52083 6.12917 3.52083H6.12833Z"
-                                    fill="#6E767D"
+                                    fill={isLike ? 'red' : '#6E767D'}
                                 />
                             </svg>
-                            184
+                            {tweet.like_count}
                         </button>
                     </li>
                     <li>

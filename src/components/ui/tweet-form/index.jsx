@@ -1,24 +1,112 @@
-function TweetForm() {
+import { useContextGlobal } from "../../../context/GlobalContext";
+import { useForm } from "../../../hooks/useForm";
+import { getMedia } from "../../../utils/helperUtil";
+import LoadingIcon from '../../../components/ui/loading'
+import Image from '../../../components/ui/image'
+import { apiPost, apiPostFormData } from "../../../api/clinet";
+import { TWEET_ENDPOINT } from "../../../api/tweetEndpoint";
+import { useEffect, useState } from "react";
+import { FiX } from "react-icons/fi";
+
+function TweetForm({ onSuccess }) {
+
+    const { storage: { user } } = useContextGlobal();
+    const [photo, setPhoto] = useState('')
+
+    const { values, setField, loading, resetTweet, handleSubmit } = useForm({
+        initialState: {
+            content: '',
+            media: []
+        },
+        onSubmit: async values => {
+
+            console.log(values);
+
+            const tweetForm = {
+                ...values,
+            }
+            
+            if (values?.media?.length) {
+                const form = new FormData()
+                form.append('file', values.media[0])
+                form.append('type', 'image')
+                form.append('tweet_id', 1)
+                const media = await apiPostFormData('/media', form)
+    
+                if (media?.data?.url) {
+                    tweetForm.media = [
+                        {
+                            type: 'image',
+                            url: media?.data?.url
+                        }
+                    ]
+                }
+            }
+            
+
+            const res = await apiPost(TWEET_ENDPOINT.tweets, tweetForm);
+            if (res.status === 201) {
+                setPhoto('')
+                resetTweet();
+                onSuccess();
+            }
+        }
+    });
+
+    const handleChange = (e) => {
+        const ready = new FileReader()
+        ready.onload = function (e) {
+            setPhoto(e.target.result)
+        }
+        ready.readAsDataURL(e.target.files[0])
+        setField('media', [e.target.files[0]])
+    }
+
+    const handleImageRemove = () => {
+        setPhoto('')
+    }
+
+    useEffect(() => {
+        return () => {
+            setPhoto('')
+        }
+    }, [])
+
     return (
         <div className="px-[13px] pb-[7px]">
             <div className="flex gap-[20px] items-start w-full mt-[10px]">
                 <img
                     className="w-[48px] h-[48px] rounded-full object-cover"
-                    src="https://images.unsplash.com/photo-1557862921-37829c790f19?q=80&w=2942&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    alt="Azar Ahmadov"
+                    src={getMedia(user.profile_image)}
+                    alt={user.name + ' ' + user.surname}
                 />
                 <form className="w-full">
                     <textarea
-                        className="bg-transparent pt-[9px] h-[65px] w-full outline-none m-0 resize-none text-[#fff] placeholder:text-[#6E767D] font-[400] placeholder:text-[20px] text-[20px]"
+                        value={values.content}
+                        onChange={e => setField('content', e.target.value)}
+                        className="bg-transparent pt-[9px] h-[65px] w-full outline-none m-0 resize-none dark:text-[#fff] placeholder:text-[#6E767D] font-[400] placeholder:text-[20px] text-[20px]"
                         placeholder="What’s happening?"
-                        defaultValue={""}
                     />
                 </form>
             </div>
+            {photo && (
+                <div className="relative size-10">
+                    <Image
+                        className="size-10"
+                        src={photo}
+                    />
+                    <button onClick={() => handleImageRemove()} className="absolute -top-2 -right-2 size-4 bg-primary rounded-full text-white inline-flex items-center justify-center">
+                        <FiX/>
+                    </button>
+                </div>
+            )}
             <div className="flex items-center justify-between ps-[70px]">
+
                 <ul className="flex items-center gap-[15px]">
                     <li className="flex">
-                        <button>
+
+                        <label className="cursor-pointer">
+                            <input onChange={(e) => handleChange(e)} accept="image/*" type="file" className="hidden" />
                             <svg
                                 width={18}
                                 height={18}
@@ -35,7 +123,7 @@ function TweetForm() {
                                     fill="#1D9BF0"
                                 />
                             </svg>
-                        </button>
+                        </label>
                     </li>
                     <li className="flex">
                         <button>
@@ -133,8 +221,9 @@ function TweetForm() {
                         </button>
                     </li>
                 </ul>
-                <button className="bg-[#1D9BF0] text-white font-bold text-[15px] px-[16px] py-[9px] rounded-full">
-                    Tweet
+                <button onClick={() => handleSubmit()} disabled={!values?.content} className="bg-[#1D9BF0] flex items-center disabled:opacity-50 text-white font-bold text-[15px] px-[16px] py-[9px] rounded-full">
+                    {loading && <LoadingIcon />}
+                    <span>Tweet</span>
                 </button>
             </div>
         </div>

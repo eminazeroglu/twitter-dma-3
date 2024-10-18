@@ -1,5 +1,5 @@
 .btn {
-    @apply h-10 px-4 inline-flex items-center justify-center rounded;
+    @apply h-10 px-4 inline-flex items-center justify-center rounded disabled:opacity-50;
 
     &.btn-rounde {
         @apply rounded-full

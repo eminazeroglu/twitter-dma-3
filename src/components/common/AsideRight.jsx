@@ -8,7 +8,7 @@ function AsideRight() {
         <div className="min-w-[360px] pt-2 pl-5 border-l dark:border-[#2F3336] hidden lg:block">
 
             <div className=" w-[360px] h-full fixed flex-shrink-0 pe-3">
-                <Scrollbar className="pr-4">
+                <Scrollbar className="pr-4 pb-20">
                     <SearchSection />
 
                     <TrendsSection />

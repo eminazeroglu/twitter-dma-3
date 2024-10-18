@@ -1,30 +1,34 @@
-import { FiHome, FiLock, FiMail, FiUser } from "react-icons/fi";
-import { Logo, Card, FormGroup, FormText, FormPassword, Button } from '../components'
-import { useState } from "react";
-import { apiGet, apiPost } from "../api/clinet";
-import { AUTH_ENDPOINT } from "../api/authEndpoint";
-import { getStorage, setStorage } from "../utils/storageUtil";
-import { Link, Navigate } from "react-router-dom";
-import { useForm } from "../hooks/useForm";
+import { useState } from "react"
+import { Button, Card, FormGroup, FormPassword, FormText, Logo } from "../components"
+import { useForm } from "../hooks/useForm"
+import { AUTH_ENDPOINT } from "../api/authEndpoint"
+import { apiGet, apiPost } from "../api/clinet"
+import { FiLock } from "react-icons/fi"
+import { getStorage, setStorage } from "../utils/storageUtil"
+import { Navigate } from "react-router-dom"
 
-function LoginPage() {
+function RegisterPage() {
 
     const { values, setField, handleSubmit, loading } = useForm({
         initialState: {
+            name: '',
+            surname: '',
             email: '',
             password: ''
         },
         onSubmit: async values => {
-            const login = await apiPost(AUTH_ENDPOINT.login, values)
-            if (login.status === 200 && login.data) {
+            const register = await apiPost(AUTH_ENDPOINT.register, values)
+
+            if (register.status === 201 && register.data) {
+            
                 const user = await apiGet(AUTH_ENDPOINT.user, {
                     headers: {
-                        'Authorization': `Bearer ${login.data.token}`
+                        'Authorization': `Bearer ${register.data}`
                     }
                 })
 
                 if (user.status === 200) {
-                    setStorage('token', login.data.token)
+                    setStorage('token', register.data)
                     setStorage('user', user.data)
                     window.location.reload()
                 }
@@ -32,23 +36,30 @@ function LoginPage() {
         }
     })
 
-
     if (getStorage('token')) return <Navigate to={'/'} />
 
     return (
         <div className="w-[300px] mx-auto mt-10">
             <Card
-                title="Login"
+                title="Qeydiyyat"
                 icon={<Logo />}
                 headerBorder={true}
             >
                 <form onSubmit={handleSubmit}>
                     <div className="space-y-4">
-                        <FormGroup 
-                            label="Email" 
-                            prefix={<FiMail />}
-                            error={'email'}
-                        >
+                        <FormGroup label="Ad" error={'name'}>
+                            <FormText
+                                value={values.name}
+                                onChange={val => setField('name', val)}
+                            />
+                        </FormGroup>
+                        <FormGroup label="Soyad" error={'surname'}>
+                            <FormText
+                                value={values.surname}
+                                onChange={val => setField('surname', val)}
+                            />
+                        </FormGroup>
+                        <FormGroup label="Email" error={'email'}>
                             <FormText
                                 value={values.email}
                                 onChange={val => setField('email', val)}
@@ -57,6 +68,7 @@ function LoginPage() {
 
                         <FormGroup error={'password'} password={true} label="Şifrə" prefix={<FiLock />}>
                             <FormPassword
+                                autoComplete="new-password"
                                 value={values.password}
                                 onChange={val => setField('password', val)}
                             />
@@ -64,12 +76,8 @@ function LoginPage() {
 
                         <div>
                             <Button block={true} loading={loading}>
-                            Daxil ol
+                                Qeyd ol
                             </Button>
-                        </div>
-
-                        <div>
-                            <Link to={'/register'} className="btn btn-block">Qeydiyyat</Link>
                         </div>
                     </div>
                 </form>
@@ -78,4 +86,4 @@ function LoginPage() {
     );
 }
 
-export default LoginPage;
+export default RegisterPage;

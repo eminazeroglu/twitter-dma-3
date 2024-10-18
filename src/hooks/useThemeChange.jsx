@@ -8,8 +8,6 @@ export const useThemeChange = () => {
     
 
     const initialTheme = () => {
-        console.log(theme);
-        
         const darkMode = theme === 'dark';
         if (darkMode)
             document.querySelector('html').classList.add('dark')

@@ -1,18 +1,18 @@
 import { FiSettings } from "react-icons/fi";
 import Card from "../../ui/card";
+import { useFetchHashtagTrending } from "../../../hooks/useFetch";
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 function Item({item}) {
     return (
         <li className="flex items-start justify-between">
             <div className="flex flex-col gap-[4px]">
+                <Link to={`/tweet/${item.name}`} className="dark:text-white text-[15px] font-bold uppercase">
+                    #{item.name}
+                </Link>
                 <span className="text-[#6E767D] text-[13px] font-[400]">
-                    Trending in Turkey
-                </span>
-                <a href="" className="dark:text-white text-[15px] font-bold">
-                    #SQUID
-                </a>
-                <span className="text-[#6E767D] text-[13px] font-[400]">
-                    2,066 Tweets
+                    {item.tweet_count} Tweets
                 </span>
             </div>
             <button className="pt-2">
@@ -42,12 +42,19 @@ function Item({item}) {
 }
 
 function TrendsSection() {
+
+    const [hashtags, fetchHashtags] = useFetchHashtagTrending();
+
+    useEffect(() => {
+        fetchHashtags()
+    }, [])
+
     return (
         <Card title="Trends for you" icon={<FiSettings className="dark:text-white" />}>
             <div className="mt-[12px] flex justify-between items-start">
                 <ul className="flex flex-col w-full gap-[20px]">
-                    {[...Array(2).keys()].map((_, index) => (
-                        <Item key={index}/>
+                    {hashtags?.data?.map((hastag, index) => (
+                        <Item item={hastag} key={index}/>
                     ))}
                 </ul>
             </div>

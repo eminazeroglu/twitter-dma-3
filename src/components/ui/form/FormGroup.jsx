@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import { useCallback, useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import { useContextGlobal } from "../../../context/GlobalContext";
 
 function FormGroup(
     {
@@ -14,6 +15,7 @@ function FormGroup(
     }
 ) {
 
+    const {errors} = useContextGlobal();
     const [isPassword, setIsPassword] = useState(password);
 
     const handlePassword = useCallback((e) => {
@@ -33,7 +35,7 @@ function FormGroup(
         <div className={classNames(
             'form-group',
             {
-                'form-group-error': error
+                'form-group-error': errors[error]
             }
         )}>
             <label className="form-label">
@@ -55,7 +57,7 @@ function FormGroup(
                     </button>
                 )}
             </div>
-            {error && <p className="mt-1 text-red-500 text-sm">{error}</p>}
+            {errors[error] && <p className="mt-1 text-red-500 text-sm">{errors[error]}</p>}
         </div>
     );
 }
