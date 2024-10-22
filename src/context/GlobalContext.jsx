@@ -8,11 +8,11 @@ export const GlobalContextProvider = ({children}) => {
 
     const [state, setState] = useState({
         storage: allStorage(),
+        auth: allStorage().user,
         errors: {},
         pageTitle: '',
         theme: getStorage('theme') ? getStorage('theme') : APP_CONFIG.defaultTheme,
     })
-    
 
     const handleState = (name, payload) => {
         setState(oldState => ({

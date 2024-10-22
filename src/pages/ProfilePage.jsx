@@ -8,10 +8,11 @@ import { FiCalendar, FiMapPin } from "react-icons/fi";
 import moment from "moment";
 import { Loading } from "../components/ui/loading";
 import classNames from "classnames";
+import ActionFollow from "../components/ui/actions/ActionFollow";
 
 function ProfilePage() {
 
-    const { handleState } = useContextGlobal();
+    const { handleState, auth } = useContextGlobal();
     const { username } = useParams();
 
     const [user, fetchUser, loading] = useFetchUserByUsername()
@@ -51,6 +52,9 @@ function ProfilePage() {
     }, [username])
 
 
+
+
+
     return (
         <Loading loading={loading}>
             <div className="relative">
@@ -59,9 +63,18 @@ function ProfilePage() {
                     <Image className="size-[140px]" imgClassName="rounded-full border-4" src={getMedia(user.profile_image)} />
 
                     <div className="pt-14">
-                        <Button>
-                            Edit Profile
-                        </Button>
+                        {user.id === auth.id && (
+                            <Button roundedFull={true}>
+                                Edit Profile
+                            </Button>
+                        )}
+                        {user.id !== auth.id && (
+                            <ActionFollow
+                                sm={false}
+                                username={user.username}
+                                isFollowed={user.is_followed}
+                            />
+                        )}
                     </div>
                 </div>
             </div>
@@ -105,12 +118,12 @@ function ProfilePage() {
                     <div className="flex items-center border-b">
                         {tabs.map((tab, index) => (
                             <NavLink end to={tab.path} className="h-[50px] flex-1 flex items-center justify-center" key={index}>
-                                {({isActive}) => (
+                                {({ isActive }) => (
                                     <span className={classNames(
                                         {
                                             'font-bold': isActive
                                         }
-                                    )}>{ tab.name }</span>
+                                    )}>{tab.name}</span>
                                 )}
                             </NavLink>
                         ))}

@@ -3,6 +3,7 @@ import { apiGet } from "../api/clinet"
 import { TWEET_ENDPOINT } from "../api/tweetEndpoint"
 import { USER_ENDPOINT } from "../api/userEndpoint"
 import { HASHTAG_ENDPOINT } from "../api/hashtagEndpoint"
+import { BOOKMARK_ENDPOINT } from "../api/bookmarkEndpoint"
 
 const useFetch = ({ initialState }) => {
     const [data, setData] = useState(initialState)
@@ -113,7 +114,7 @@ export const useFetchUsers = () => {
     }
 
     return [
-        data || {},
+        data || [],
         fetch,
         loading
     ]
@@ -142,6 +143,21 @@ export const useFetchHashtagTweets = () => {
 
     return [
         data || {},
+        fetch,
+        loading,
+        error
+    ]
+}
+
+export const useFetchBookmarks = () => {
+    const { data, fetchData, loading, error } = useFetch({})
+
+    const fetch = () => {
+        fetchData(BOOKMARK_ENDPOINT.bookmarks)
+    }
+
+    return [
+        data?.data || [],
         fetch,
         loading,
         error

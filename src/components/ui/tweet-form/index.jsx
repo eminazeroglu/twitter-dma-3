@@ -75,10 +75,10 @@ function TweetForm({ onSuccess }) {
     return (
         <div className="px-[13px] pb-[7px]">
             <div className="flex gap-[20px] items-start w-full mt-[10px]">
-                <img
-                    className="w-[48px] h-[48px] rounded-full object-cover"
+                <Image
+                    className="size-[48px]"
+                    imgClassName="rounded-full" 
                     src={getMedia(user.profile_image)}
-                    alt={user.name + ' ' + user.surname}
                 />
                 <form className="w-full">
                     <textarea

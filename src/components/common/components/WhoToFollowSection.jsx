@@ -24,7 +24,7 @@ function WhoToFollowSection() {
             onShowMore={handleBtn}
         >
             <ul className="mt-[20px] flex flex-col gap-[20px]">
-                {users?.data?.map((user, index) => (
+                {users?.map((user, index) => (
                     <FolloweItem item={user} key={index}/>
                 ))}
             </ul>

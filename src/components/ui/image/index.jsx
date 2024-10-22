@@ -19,7 +19,10 @@ function Image(
     }
 
     useEffect(() => {
-        setImgSrc(src)
+        if (src)
+            setImgSrc(src)
+        else 
+            setImgSrc(failSrc)
     }, [src])
 
     return (

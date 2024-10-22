@@ -1,6 +1,41 @@
+import { useEffect, useRef, useState } from "react";
+import { Image } from "../..";
+import { FolloweItem } from "../../ui/follower";
+import { apiGet } from "../../../api/clinet";
+import { SEARCH_ENDPOINT } from "../../../api/searchEndpoint";
+import Scrollbar from "../../ui/scrollbar";
+import { useLocation } from "react-router-dom";
+
 function SearchSection() {
+
+    const { pathname } = useLocation()
+    const [users, setUsers] = useState([])
+    const inputRef = useRef(null)
+
+    const handleSearch = async (text) => {
+        const q = text.trim()
+        if (q.length >= 3) {
+            const res = await apiGet(SEARCH_ENDPOINT.users, { params: { q } })
+            if (res.status === 200 && res?.data?.data?.length > 0) {
+                setUsers(res?.data?.data)
+            }
+            else {
+                setUsers([])
+            }
+        }
+        else {
+            setUsers([])
+        }
+    }
+
+    useEffect(() => {
+        setUsers([])
+        inputRef.current.value = ''
+    }, [pathname])
+    
+
     return (
-        <form className="flex items-center mt-[6px] dark:bg-gray-800 bg-gray-200 rounded-full p-[13px]">
+        <form className="flex relative items-center mt-[6px] dark:bg-gray-800 bg-gray-200 rounded-full p-[13px]">
             <svg
                 className="me-[14px]"
                 width={16}
@@ -15,10 +50,25 @@ function SearchSection() {
                 />
             </svg>
             <input
-                type="search"
+                ref={inputRef}
+                onChange={e => handleSearch(e.target.value)}
+                type="text"
                 placeholder="Serach Twitter"
                 className="w-full text-[15px] placeholder:text-[15px] font-[400] placeholder:text-[#6E767D] dark:text-white bg-transparent outline-none"
             />
+
+            {users.length > 0 && (
+                <div className="absolute divide-y top-full bg-gray-100 shadow left-0 right-0 rounded-xl">
+                    <div className="h-[300px]">
+                        <Scrollbar>
+                            {users.map((user, index) => (
+                                <FolloweItem key={index} item={user} className="p-3" />
+                            ))}
+                        </Scrollbar>
+                    </div>
+                </div>
+            )}
+
         </form>
     );
 }

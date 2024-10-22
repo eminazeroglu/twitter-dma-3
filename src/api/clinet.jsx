@@ -43,3 +43,12 @@ export const apiPostFormData = (url, data, config = {}) => {
 }
 
 export const apiGet = (url, config = {}) => createInstance().get(url, config)
+
+export const apiDelete = (url, data, config = {}) => {
+    try {
+        return createInstance().delete(url, data, config)
+    }
+    catch(e) {
+        return e;
+    }
+}

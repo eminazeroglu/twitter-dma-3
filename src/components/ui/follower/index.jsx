@@ -1,16 +1,24 @@
 import React from 'react'
 import Verify from "../verify";
 import { getMedia } from '../../../utils/helperUtil';
-import { Link } from 'react-router-dom';
+import Image from '../image';
 
-export const FolloweItem = ({item = {}}) => {
+import { Link } from 'react-router-dom';
+import ActionFollow from '../actions/ActionFollow';
+import classNames from 'classnames';
+
+export const FolloweItem = ({ item = {}, className }) => {
+
     return (
-        <li className="flex gap-[12px] items-center justify-between">
-            <div className="flex gap-[12px]">
-                <img
-                    className="w-[48px] h-[48px] rounded-full object-cover"
+        <li className={classNames(
+            'flex gap-[12px] items-center justify-between',
+            className || ''
+        )}>
+            <div className="flex gap-[12px] whitespace-nowrap">
+                <Image
+                    className="size-[48px]"
+                    imgClassName="rounded-full"
                     src={getMedia(item.profile_image)}
-                    alt={item.name + ' ' + item.surname}
                 />
                 <Link to={`/profile/${item.username}`}>
                     <span className="flex items-center gap-[3px] dark:text-[#D9D9D9] font-[400] text-[15px]">
@@ -22,9 +30,7 @@ export const FolloweItem = ({item = {}}) => {
                     </span>
                 </Link>
             </div>
-            <button className="dark:bg-white bg-[#1D9BF0] rounded-full text-white dark:text-[#0F1419] text-[14px]  px-[15px] py-[7px] font-[400]">
-                Follow
-            </button>
+            <ActionFollow isFollowed={item?.is_followed} username={item.username} />
         </li>
     )
 }

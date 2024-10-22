@@ -5,4 +5,5 @@ export const USER_ENDPOINT = {
     fetchTweetsByUsername: '/users/:username/tweets',
     fetchFollowersByUsername: '/users/:username/followers',
     fetchFollowingByUsername: '/users/:username/following',
+    followByUsername: '/users/:username/follow',
 }
